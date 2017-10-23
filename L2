@@ -1,0 +1,49 @@
+windows怎么编译.c文件
+山奈连翘 | 浏览 1135 次 |举报
+我有更好的答案
+发布于2016-06-20 10:49
+最佳答案
+
+（1）先用记事本编写如下所示的代码，并另存为hello.cpp，假设其保存路径为
+C:\Users\Administrator\Desktop。
+#include<iostream>
+using namespace std;
+int main()
+{
+    cout<<"hello world!"<<endl;
+    return 0;
+}
+（2）用记事本写一段简单的批处理文件，内容如下所示，在保存文件时选择另存为，文件名
+假设为batch.bat，bat是批处理文件的后缀，保存类型选择：所有文件（这个尤其需要注意），
+假设其保存路径也是：C:\Users\Administrator\Desktop。
+set path=D:\Softwares\en_Visual_Studio2010_Professional_x86_x16-81637\VC\bin
+set include=D:\Softwares\en_Visual_Studio2010_Professional_x86_x16-81637\VC\include
+set lib=D:\Softwares\en_Visual_Studio2010_Professional_x86_x16-81637\VC\lib
+上面批处理文件的第一句话表示设置环境变量，这个也可以通过：计算机/属性/高级系统设置/
+环境变量/用户变量，把D:\Softwares\en_Visual_Studio2010_Professional_x86_x16-81637\VC\bin
+放到path的值里去，记得与之前已有值之间用"；"隔开。这个path文件夹是我们装载VS2010时自
+带的，在设置路径时要根据自己的安装路径进行修改，里面包含微软在Windows下给我们提供的
+C/C++编译器cl.exe程序（编译器自身也是一个软件程序，只是它的作用是用来编译其它的程序），
+当然还有link.exe链接程序，调用cl时，系统会自动调用link程序（后面将看到我们只用了cl命令就
+可以进行C/C++程序的编译、链接）。后面两句话分别表示包含C++中自带的头文件库和静态链接
+库，静态理解库包含了头文件中函数对应的实现部分，为了不让人们看到其中的源代码，它以二进
+制文件形式编码，若要查看其内容需要进行反汇编。
+（3）通过cmd命令进入DOS操作界面，输入cd C:\Users\Administrator\Desktop进入cpp文件和bat
+批处理文件所在的位置，然后键入batch.bat进行批处理，这些操作在VS2010集成开发环境中都为我
+设置好了，所以我们在里面写C/C++程序时并没有这样设置路径的繁琐操作，但是通过自己手动的
+路径设置，我们会对程序的编译、链接、执行有更加深入的认识。
+（4）键入cl hello.cpp，我们会看到计算机报出了“无法启动此程序，因为计算机中丢失mspdb100.dll。
+尝试重新安装该程序以解决此问题”的系统储物，dll文件是动态链接库文件，其是在cl.exe程序运行时
+才被加载进来的文件，这个静态链接库lib文件不同。这说明在D:\Softwares\en_Visual_Studio2010_
+Professional_x86_x16-81637\VC\bin路径里没有找到mspdb100.dll，原来此文件在文件夹D:\Softwares\
+en_Visual_Studio2010_Professional_x86_x16-81637\VC\Common7\IDE里，我们可以将此文件拷到bin
+文件夹里，或将D:\Softwares\en_Visual_Studio2010_Professional_x86_x16-81637\Common7\IDE加到
+批处理的path环境变量里，或者将其加到cpp文件所在的文件夹里，这只会引起在搜索顺序上的不同。
+（5）再次键入cl hello.cpp，我们看到在C:\Users\Administrator\Desktop文件夹里得到了hello.obj文件，
+这是编译后的输出文件，但是没有得到可执行exe文件，DOS界面里出现这样的错误“LINK:fatal error LNK
+1104:cannot open file 'kernel32.lib' “这样的链接错误，kernel32.lib是Windows系统文件，通过Windows
+自带的搜索工具，我们看到此文件在文件夹C:\Program Files\Microsoft SDKs\Windows\v7.0A\Lib里，我们
+可以将其加到cpp文件所在的文件夹或bin文件里。再次键入cl hello.cpp，我们发现这次程序被成功编译链接
+了，cpp文件所在的文件夹里多了两个文件：hello.obj和hello.exe。
+（6）在DOS界面键入hello.exe，程序被执行，输出了我们预想的hello world!，至此，在Windows下模拟
+linux命令行操作，编译C/C++文件全部完成了。
